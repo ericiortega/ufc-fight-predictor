@@ -274,6 +274,9 @@ def build_tables(
     # --- fighters + identity resolution
     fighters = build_fighters(snapshot)
     resolver = make_resolver(fighters, aliases, names_cfg)
+    for alt, cands in sorted(resolver.conflicting_alt_names.items()):
+        profiles = ", ".join(f"{c.name} [{c.fighter_id}]" for c in cands)
+        issues.append(f"Upstream alt name {alt!r} contradicts profile {profiles}; ignored")
     provisional: dict[str, str] = {}
 
     def resolve(raw: str, wc_lbs: int | None, on: date, fight_id: str) -> str | None:

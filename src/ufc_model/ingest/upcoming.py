@@ -19,7 +19,7 @@ from ufc_model.weight_classes import parse_weight_class
 log = logging.getLogger(__name__)
 
 # Matched to an existing profile with confidence.
-MATCHED_METHODS = {"exact", "normalized", "compact", "alias", "tiebreak"}
+MATCHED_METHODS = {"exact", "alt_name", "normalized", "compact", "alias", "tiebreak"}
 CURATED_NEW_NOTE = "curated: distinct fighter"
 
 

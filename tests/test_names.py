@@ -71,13 +71,13 @@ def test_exact_match(resolver: NameResolver) -> None:
         ("Waldo Cortes Acosta", "cortes", "normalized"),
         ("Kai Kamaka III", "kamaka", "normalized"),
         ("YiSak Lee", "yisak", "compact"),
-        ("Zach Reese", "reese", "exact"),  # ufcstats' own alternate name
+        ("Zach Reese", "reese", "alt_name"),  # ufcstats' own alternate name
     ],
 )
 def test_confident_non_exact_matches_are_logged(resolver, raw, fid, method) -> None:
     m = resolver.resolve(raw)
     assert (m.fighter_id, m.method, m.confident) == (fid, method, True)
-    assert m.needs_review == (method != "exact")
+    assert m.needs_review
 
 
 def test_shared_name_resolved_by_weight(resolver: NameResolver) -> None:
@@ -168,3 +168,43 @@ def test_alias_unknown_weight_class_rejected(tmp_path) -> None:
     path.write_text("aliases:\n  - {name: X Y, weight_class: Cruiserweight, fighter_id: ko}\n")
     with pytest.raises(ValueError, match="weight_class"):
         load_aliases(path)
+
+
+def test_conflicting_upstream_alt_name_is_not_trusted() -> None:
+    """Real upstream glitch: profile "Regina Malpica" carries the name "Tyrell Fortune"."""
+    fighters = [
+        Candidate(
+            "malpica", "Regina Malpica", 125, date(2004, 10, 19), alt_names=("Tyrell Fortune",)
+        ),
+        Candidate("reese", "Zachary Reese", 185, None, alt_names=("Zach Reese",)),
+    ]
+    r = NameResolver(fighters)
+    m = r.resolve("Tyrell Fortune", weight_class_lbs=265, allow_new=True)
+    assert m.fighter_id is None and m.method == "unresolved"
+    assert m.candidates == ["malpica"] and "different upstream profile" in m.note
+    # Consistent variants are still used.
+    assert r.resolve("Zach Reese").fighter_id == "reese"
+
+
+@pytest.mark.parametrize(
+    ("primary", "alt", "ok"),
+    [
+        ("Zachary Reese", "Zach Reese", True),
+        ("Muhammad Said", "Muhammad Saidov", True),
+        ("JonathanMix", "Jonathan Mix", True),
+        ("Regina Malpica", "Tyrell Fortune", False),
+        ("Jose Montanha", "Henrique Da Silva Lopes", False),
+    ],
+)
+def test_alt_name_consistency(primary, alt, ok) -> None:
+    from ufc_model.names import alt_name_consistent
+
+    assert alt_name_consistent(primary, alt) is ok
+
+
+def test_blocked_alias_overrides_a_match(tmp_path) -> None:
+    path = tmp_path / "aliases.yaml"
+    path.write_text("aliases:\n  - {name: Zach Reese, fighter_id: block}\n")
+    fighters = [Candidate("reese", "Zachary Reese", 185, None, alt_names=("Zach Reese",))]
+    m = NameResolver(fighters, load_aliases(path)).resolve("Zach Reese", allow_new=True)
+    assert m.fighter_id is None and m.method == "unresolved" and "manual review" in m.note

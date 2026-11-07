@@ -42,7 +42,9 @@ _CHAR_MAP = str.maketrans(
 
 PLACEHOLDER_NAMES = {"tbd", "tba", "to be determined", "to be announced", "unknown", "opponent"}
 
-MatchMethod = Literal["exact", "normalized", "compact", "alias", "tiebreak", "new", "unresolved"]
+MatchMethod = Literal[
+    "exact", "alt_name", "normalized", "compact", "alias", "tiebreak", "new", "unresolved"
+]
 
 
 def clean_display_name(name: str) -> str:
@@ -82,10 +84,12 @@ class Candidate:
 
 @dataclass(frozen=True)
 class Alias:
-    """A curated mapping. ``fighter_id=None`` means "confirmed new/distinct fighter"."""
+    """A curated mapping. ``fighter_id=None`` means "confirmed new/distinct fighter";
+    ``blocked=True`` holds the name unresolved for manual review."""
 
     fighter_id: str | None
     weight_class_lbs: int | None = None
+    blocked: bool = False
 
 
 @dataclass
@@ -109,6 +113,7 @@ def load_aliases(path: Path) -> dict[str, list[Alias]]:
     Each entry may be scoped to a ``weight_class`` (for names shared by two
     fighters). ``fighter_id: new`` marks a name confirmed to be a distinct
     fighter with no profile, silencing a misleading fuzzy suggestion.
+    ``fighter_id: block`` keeps a name unresolved even if it would otherwise match.
     """
     from ufc_model.weight_classes import WEIGHT_CLASS_LBS
 
@@ -123,9 +128,24 @@ def load_aliases(path: Path) -> dict[str, list[Alias]]:
             raise ValueError(f"Alias {a['name']!r}: unknown weight_class {wc!r}")
         fid = str(a["fighter_id"])
         out[normalize_name(a["name"])].append(
-            Alias(None if fid == "new" else fid, WEIGHT_CLASS_LBS.get(wc) if wc else None)
+            Alias(
+                None if fid in {"new", "block"} else fid,
+                WEIGHT_CLASS_LBS.get(wc) if wc else None,
+                blocked=fid == "block",
+            )
         )
     return dict(out)
+
+
+def alt_name_consistent(primary: str, alt: str) -> bool:
+    """Whether an upstream secondary name plausibly belongs to the same profile.
+
+    Upstream sometimes attaches a completely different fighter's name to a
+    profile ("Regina Malpica" / "Tyrell Fortune"). A trustworthy variant shares
+    a word with the profile name, or is identical once spaces are removed.
+    """
+    p, a = normalize_name(primary), normalize_name(alt)
+    return bool(set(p.split()) & set(a.split())) or p.replace(" ", "") == a.replace(" ", "")
 
 
 def _age_years(dob: date, on: date) -> float:
@@ -151,12 +171,22 @@ class NameResolver:
         self.min_age = min_age_years
         self.max_age = max_age_years
         self.min_sim = suggestion_min_similarity
+        self._primary: dict[str, list[Candidate]] = defaultdict(list)
         self._exact: dict[str, list[Candidate]] = defaultdict(list)
         self._norm: dict[str, list[Candidate]] = defaultdict(list)
         self._compact: dict[str, list[Candidate]] = defaultdict(list)
         self._nick: dict[tuple[str, str], list[Candidate]] = defaultdict(list)
+        # Secondary names that contradict their profile: never used to match.
+        self.conflicting_alt_names: dict[str, list[Candidate]] = defaultdict(list)
         for c in fighters:
-            for n in dict.fromkeys((c.name, *c.alt_names)):  # dedupe, keep order
+            self._primary[c.name.strip()].append(c)
+            trusted = []
+            for alt in c.alt_names:
+                if alt_name_consistent(c.name, alt):
+                    trusted.append(alt)
+                else:
+                    self.conflicting_alt_names[normalize_name(alt)].append(c)
+            for n in dict.fromkeys((c.name, *trusted)):  # dedupe, keep order
                 if c not in self._exact[n.strip()]:
                     self._exact[n.strip()].append(c)
                 if c not in self._norm[normalize_name(n)]:
@@ -245,6 +275,10 @@ class NameResolver:
             ]
             if len(applicable) == 1:
                 a = applicable[0]
+                if a.blocked:
+                    return MatchResult(
+                        raw, None, "unresolved", False, note="curated: held for manual review"
+                    )
                 if a.fighter_id is None:
                     return MatchResult(raw, None, "new", True, note="curated: distinct fighter")
                 return MatchResult(
@@ -253,13 +287,24 @@ class NameResolver:
 
         method: MatchMethod
         for method, cands in (  # noqa: B007 - `method` is used after the loop
-            ("exact", self._exact.get(raw, [])),
+            ("exact", self._primary.get(raw, [])),
+            # ufcstats' secondary name for the profile (fighter-details FIRST + LAST)
+            ("alt_name", self._exact.get(raw, [])),
             ("normalized", self._norm.get(norm, [])),
             ("compact", self._compact.get(compact_name(raw), [])),
         ):
             if cands:
                 break
         else:
+            if conflicted := self.conflicting_alt_names.get(norm):
+                return MatchResult(
+                    raw,
+                    None,
+                    "unresolved",
+                    False,
+                    [c.fighter_id for c in conflicted],
+                    note="name attached to a different upstream profile; needs manual review",
+                )
             suggestions = self._suggest(raw)
             if allow_new and not suggestions:
                 return MatchResult(raw, None, "new", True, note="no candidate or near-match")

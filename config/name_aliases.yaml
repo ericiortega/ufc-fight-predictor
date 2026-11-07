@@ -39,3 +39,10 @@ aliases:
     note: >-
       Korean name order; profile "Seokhyeon Ko" (170 lbs, 3 UFC fights). Booked at welterweight.
       Without this alias a broad near-match check is what stopped him being treated as a debut.
+
+  # --- held for manual review (decision 2026-11-07); `block` keeps them unresolved
+  - name: Muhammad Saidov
+    fighter_id: block
+    note: >-
+      Upstream lists "Muhammad Saidov" as the secondary name of profile "Muhammad Said"
+      (b01a5e0dcd9f231d, 205 lbs, born 1996). Plausible, but held for manual confirmation.
