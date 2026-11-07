@@ -73,6 +73,9 @@ def resolve_card(
                 "event_date": event_date,
                 "bout_order": b.bout_order,
                 "card_segment": b.card_segment,
+                "is_title": b.is_title,
+                # Non-title main events are five rounds; card order 1 is the main event.
+                "is_main_event": b.bout_order == 1 and b.source_section == "fight_card",
                 "weight_class_raw": b.weight_class_raw,
                 "weight_class": wc.name,
                 "fighter_a_name": b.fighter_a_name,

@@ -42,3 +42,36 @@ names:
   weight_margin_lbs: 15
   min_age_years: 18
   max_age_years: 60  # Ron van Clief fought at UFC 4 aged 51
+
+features:
+  # All fights (from 1994) build fighter history and Elo; the training /
+  # evaluation dataset only starts here.
+  train_start_year: 2005
+  recent_fights: 3
+  # Shrinkage strength toward point-in-time league averages (pseudo-counts).
+  shrink_minutes: 15
+  shrink_sig_attempts: 40
+  shrink_td_attempts: 6
+  # Used only before any fighter has been observed (first 1994 event).
+  default_height_in: 70
+  default_reach_in: 71
+  default_age_years: 28
+  default_stance: orthodox
+
+elo:
+  initial: 1500
+  k: 80                  # tuned 2026-11-07 by `python -m ufc_model.features.tune_elo`
+  finish_multiplier: 1.0 # tuned: finish bonus did not help (grid 1.0-1.5)
+  tuning_start: 2005-01-01
+  tuning_end: 2012-12-31
+  grid_k: [16, 24, 32, 40, 48, 64, 80, 100, 128]
+  grid_finish_multiplier: [1.0, 1.15, 1.3, 1.5]
+
+leakage:
+  # Profile-missingness test: missingness flags + n_prior_fights vs n_prior_fights alone.
+  test_years: [2010, 2026]
+  max_logloss_gain: 0.002
+  max_accuracy_gain: 0.005
+  # Pipeline check: fed (imputed) profile features must not reveal missingness.
+  max_identifiability_auc_gain: 0.015
+  max_captured_share: 0.20

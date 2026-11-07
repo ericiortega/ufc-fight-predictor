@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 
@@ -66,6 +67,36 @@ class NamesConfig(BaseModel):
     max_age_years: float
 
 
+class FeaturesConfig(BaseModel):
+    train_start_year: int
+    recent_fights: int
+    shrink_minutes: float
+    shrink_sig_attempts: float
+    shrink_td_attempts: float
+    default_height_in: float
+    default_reach_in: float
+    default_age_years: float
+    default_stance: str
+
+
+class EloConfig(BaseModel):
+    initial: float
+    k: float
+    finish_multiplier: float
+    tuning_start: date
+    tuning_end: date
+    grid_k: list[float]
+    grid_finish_multiplier: list[float]
+
+
+class LeakageConfig(BaseModel):
+    test_years: tuple[int, int]
+    max_logloss_gain: float
+    max_accuracy_gain: float
+    max_identifiability_auc_gain: float
+    max_captured_share: float
+
+
 class Config(BaseModel):
     project: ProjectConfig
     paths: PathsConfig
@@ -74,6 +105,9 @@ class Config(BaseModel):
     wikipedia: WikipediaConfig
     staleness: StalenessConfig
     names: NamesConfig
+    features: FeaturesConfig
+    elo: EloConfig
+    leakage: LeakageConfig
 
 
 def load_config(path: Path | None = None) -> Config:

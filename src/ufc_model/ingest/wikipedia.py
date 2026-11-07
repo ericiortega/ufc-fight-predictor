@@ -48,6 +48,7 @@ class CardBout:
     fighter_a_name: str
     fighter_b_name: str
     source_section: str  # "fight_card" or "announced_bouts"
+    is_title: bool = False  # a fighter is marked "(c)" / "(ic)" (champion / interim)
 
 
 def fetch_page(client: PoliteClient, cfg: Config, title: str, cache_dir: Path) -> WikiPage:
@@ -142,12 +143,15 @@ def parse_fight_card(html: str) -> list[CardBout]:
     seen: set[frozenset[str]] = set()
 
     def add(segment: str | None, wc: str, a: str, b: str, section: str) -> None:
+        is_title = (
+            bool(re.search(r"\((?:c|ic)\)", f"{a} {b}", re.IGNORECASE)) or "title" in wc.lower()
+        )
         a, b = clean_display_name(a), clean_display_name(b)
         key = frozenset((a.lower(), b.lower()))
         if not a or not b or key in seen:
             return
         seen.add(key)
-        bouts.append(CardBout(len(bouts) + 1, segment, wc.strip(), a, b, section))
+        bouts.append(CardBout(len(bouts) + 1, segment, wc.strip(), a, b, section, is_title))
 
     for table in soup.find_all("table", class_="toccolours"):
         segment = None

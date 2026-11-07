@@ -20,6 +20,8 @@ dependencies = [
     "pydantic==2.14.3",
     "PyYAML==6.0.3",
     "requests==2.34.2",
+    "scikit-learn==1.9.1",
+    "scipy==1.18.1",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +33,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = ["data: needs the local DuckDB built from real data (skipped if absent)"]
 
 [tool.ruff]
 line-length = 100

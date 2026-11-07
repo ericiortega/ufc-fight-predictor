@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS upcoming_events (
 );
 CREATE TABLE IF NOT EXISTS upcoming_bouts (
     wiki_title VARCHAR, event_date DATE, bout_order INTEGER, card_segment VARCHAR,
+    is_title BOOLEAN, is_main_event BOOLEAN,
     weight_class_raw VARCHAR, weight_class VARCHAR,
     fighter_a_name VARCHAR, fighter_b_name VARCHAR,
     fighter_a_id VARCHAR, fighter_b_id VARCHAR,
@@ -80,9 +81,18 @@ def connect(path: Path) -> duckdb.DuckDBPyConnection:
     return con
 
 
+# DDL per table, so rebuilt tables always get the current schema.
+TABLE_DDL = {
+    stmt.split("EXISTS", 1)[1].split("(", 1)[0].strip(): stmt.strip() + ";"
+    for stmt in SCHEMA.split(";")
+    if stmt.strip()
+}
+
+
 def replace_table(con: duckdb.DuckDBPyConnection, name: str, df: pd.DataFrame) -> None:
-    """Replace a table's rows with ``df``, matching columns by name."""
-    con.execute(f"DELETE FROM {name}")
+    """Recreate ``name`` from its current DDL and fill it with ``df`` (columns by name)."""
+    con.execute(f"DROP TABLE IF EXISTS {name}")
+    con.execute(TABLE_DDL[name])
     if df.empty:
         return
     con.register("_df", df)
