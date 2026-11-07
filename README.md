@@ -6,8 +6,13 @@ probabilities, then re-ingests results and retrains after each card.
 **This is a research and portfolio project, not a betting tool.** Outputs are
 model predictions and research findings, never picks or betting advice.
 
-> Status: Phase 1 (data ingestion). The full README (methodology, leakage
-> prevention, results vs. baselines, ablation, limitations) arrives in Phase 7.
+> **Work in progress.** Built in phases: ingestion, point-in-time features and
+> Elo, walk-forward evaluation, and pre-event prediction logging are done; the
+> retraining pipeline, app, enrichment study and full write-up are in progress.
+>
+> Pre-event predictions are appended to `predictions/history.jsonl`, a
+> hash-chained log. Each line's hash covers the previous line's hash, and the
+> git push time records that predictions existed before each event.
 
 ## Data sources
 
