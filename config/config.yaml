@@ -92,3 +92,13 @@ models:
   start_year_experiment: [2001, 2005]
   profile_features: [diff_height_in, diff_reach_in, diff_age_years]
   reports_dir: reports/phase3
+
+production:
+  registry_dir: models/registry
+  keep_versions: 5
+  predictions_log: predictions/history.jsonl
+  # Recent-card check in every retrain: train on fights before the last N days,
+  # score those days, and fit a temperature as a calibration drift check.
+  holdout_days: 365
+  temperature_drift_tolerance: 0.15
+  top_drivers: 5

@@ -110,6 +110,15 @@ class ModelsConfig(BaseModel):
     reports_dir: Path
 
 
+class ProductionConfig(BaseModel):
+    registry_dir: Path
+    keep_versions: int
+    predictions_log: Path
+    holdout_days: int
+    temperature_drift_tolerance: float
+    top_drivers: int
+
+
 class Config(BaseModel):
     project: ProjectConfig
     paths: PathsConfig
@@ -122,6 +131,7 @@ class Config(BaseModel):
     elo: EloConfig
     leakage: LeakageConfig
     models: ModelsConfig
+    production: ProductionConfig
 
 
 def load_config(path: Path | None = None) -> Config:
@@ -132,6 +142,9 @@ def load_config(path: Path | None = None) -> Config:
     cfg.paths = cfg.paths.resolved(PROJECT_ROOT)
     if not cfg.models.reports_dir.is_absolute():
         cfg.models.reports_dir = PROJECT_ROOT / cfg.models.reports_dir
+    for attr in ("registry_dir", "predictions_log"):
+        if not getattr(cfg.production, attr).is_absolute():
+            setattr(cfg.production, attr, PROJECT_ROOT / getattr(cfg.production, attr))
     return cfg
 
 

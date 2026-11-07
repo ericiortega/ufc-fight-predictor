@@ -1,0 +1,31 @@
+{
+  "version": "lr-20261031-9668ddd9",
+  "model_type": "logistic_regression (StandardScaler + L2), uncalibrated",
+  "trained_at": "2026-11-07T19:02:31+00:00",
+  "data_cutoff": "2026-10-31",
+  "train_start_year": 2005,
+  "n_train_fights": 8382,
+  "params": {
+    "C": 0.0074593432857265485
+  },
+  "n_features": 69,
+  "code_version": "c8aa20f",
+  "recent_holdout": {
+    "holdout_start": "2025-11-01",
+    "holdout_end": "2026-10-31",
+    "model": {
+      "n": 547.0,
+      "accuracy": 0.6399,
+      "log_loss": 0.6401,
+      "brier": 0.2243
+    },
+    "elo": {
+      "n": 547.0,
+      "accuracy": 0.5548,
+      "log_loss": 0.6874,
+      "brier": 0.2466
+    },
+    "temperature": 0.986,
+    "temperature_drift_flag": false
+  }
+}
