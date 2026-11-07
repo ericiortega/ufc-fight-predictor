@@ -1,0 +1,14 @@
+bout,fighter_a,fighter_b,weight_class,p_a_win,p_a_uncalibrated,elo_p_a,top_drivers
+UFC 334#1,Ciryl Gane,Josh Hokit,Heavyweight,0.5234,0.5234,0.765,elo +0.440; age_years -0.406; sapm +0.149; sig_def +0.130; slpm -0.093
+UFC 334#2,Kayla Harrison,Amanda Nunes,Women's Bantamweight,0.5215,0.5215,0.2506,elo -0.433; age_years +0.184; layoff_days +0.117; n_fights +0.095; sapm +0.092
+UFC 334#3,Caio Borralho,Yousri Belgaroui,Middleweight,0.5779,0.5779,0.6836,elo +0.430; slpm -0.113; age_years +0.112; finish_win_share -0.100; recent_win_rate +0.097
+UFC 334#4,Uroš Medić,Kevin Holland,Welterweight,0.5574,0.5574,0.5867,elo +0.193; n_fights +0.133; kd_absorbed_per15 -0.111; recent_win_rate -0.107; reach_in -0.105
+UFC 334#5,Bilal Hasan,Luis Gurule,Flyweight,0.7221,0.7221,0.6791,elo +0.400; age_years +0.350; sapm +0.133; finish_win_share +0.093; been_finished_rate +0.091
+UFC 334#6,Stephen Thompson,Charles Radtke,Welterweight,0.3837,0.3837,0.5353,age_years -0.378; td_per15 -0.131; slpm +0.112; n_fights -0.102; recent_slpm +0.100
+UFC 334#7,Drew Dober,Chris Duncan,Lightweight,0.2852,0.2852,0.4467,age_years -0.299; td_per15 -0.178; elo -0.144; n_fights -0.119; recent_sapm +0.069
+UFC 334#8,Jim Miller,Terrance McKinney,Lightweight,0.3905,0.3905,0.6121,age_years -0.638; elo +0.203; sig_def +0.125; recent_sig_def +0.115; been_finished_rate +0.101
+UFC 334#9,Donte Johnson,César Almeida,Middleweight,0.781,0.781,0.6612,age_years +0.590; elo +0.371; recent_sig_def +0.130; recent_win_rate -0.113; sig_def +0.111
+UFC 334#10,Jared Gordon,Melquizael Costa,Lightweight,0.3712,0.3712,0.3342,elo -0.367; age_years -0.358; recent_win_rate +0.087; slpm +0.081; been_finished_rate -0.077
+UFC 334#11,Macy Chiasson,Beatriz Mesquita,Women's Bantamweight,0.3847,0.3847,0.3922,elo -0.197; recent_win_rate +0.118; recent_sig_def -0.111; sig_def -0.100; n_fights -0.099
+UFC 334#12,Evan Elder,Samuel Sanches,Lightweight,0.5044,0.5044,0.5557,age_years -0.363; is_debut +0.190; elo +0.124; layoff_days -0.118; slpm +0.109
+UFC 334#13,Juan Díaz,Alateng Heili,Bantamweight,0.6948,0.6948,0.4335,age_years +0.398; sapm +0.197; td_per15 +0.164; elo -0.150; finish_win_share +0.102

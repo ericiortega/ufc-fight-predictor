@@ -176,7 +176,9 @@ def bout_rows(meta: dict, snap_a, snap_b) -> list[dict]:
         "is_title": float(bool(meta["is_title"])),
         "is_women": float(bool(meta["is_women"])),
         "five_rounds": float(meta.get("scheduled_rounds") == 5),
-        "weight_class": meta["weight_class"] or "Unknown",
+        "weight_class": meta["weight_class"]
+        if isinstance(meta["weight_class"], str)
+        else "Unknown",
         "stance_matchup": "-".join(sorted((sa, sb))),
     }
     label_a = meta.get("label_a")

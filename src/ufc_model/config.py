@@ -97,6 +97,19 @@ class LeakageConfig(BaseModel):
     max_captured_share: float
 
 
+class ModelsConfig(BaseModel):
+    test_years: tuple[int, int]
+    inner_val_years: int
+    optuna_trials_lgbm: int
+    optuna_trials_lr: int
+    lgbm_seeds: list[int]
+    calibrations: list[str]
+    leakage_accuracy_alarm: float
+    start_year_experiment: list[int]
+    profile_features: list[str]
+    reports_dir: Path
+
+
 class Config(BaseModel):
     project: ProjectConfig
     paths: PathsConfig
@@ -108,6 +121,7 @@ class Config(BaseModel):
     features: FeaturesConfig
     elo: EloConfig
     leakage: LeakageConfig
+    models: ModelsConfig
 
 
 def load_config(path: Path | None = None) -> Config:
@@ -116,6 +130,8 @@ def load_config(path: Path | None = None) -> Config:
     with open(path) as f:
         cfg = Config.model_validate(yaml.safe_load(f))
     cfg.paths = cfg.paths.resolved(PROJECT_ROOT)
+    if not cfg.models.reports_dir.is_absolute():
+        cfg.models.reports_dir = PROJECT_ROOT / cfg.models.reports_dir
     return cfg
 
 

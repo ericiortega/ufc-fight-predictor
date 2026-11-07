@@ -150,6 +150,10 @@ def test_mirror_synthetic(league) -> None:
 
 @pytest.mark.data
 def test_mirror_real_data(real_tables) -> None:
+    rows = real_tables.get("fight_features")
+    if rows is not None:
+        assert not rows[NUMERIC_FEATURES].isna().any().any()
+        assert not rows[CATEGORICAL_FEATURES].isna().any().any()
     _check_mirror(
         real_tables.get("fight_features") if "fight_features" in real_tables else build(real_tables)
     )

@@ -75,3 +75,20 @@ leakage:
   # Pipeline check: fed (imputed) profile features must not reveal missingness.
   max_identifiability_auc_gain: 0.015
   max_captured_share: 0.20
+
+models:
+  # Walk-forward, expanding window: train on all eligible fights before year Y,
+  # test on year Y. Elo was tuned on 2005-2012, so evaluation starts in 2013.
+  test_years: [2013, 2026]
+  # Inside each training window, the last N years are the time-ordered
+  # validation block for Optuna and calibration (never the test year).
+  inner_val_years: 2
+  optuna_trials_lgbm: 25
+  optuna_trials_lr: 12
+  lgbm_seeds: [42, 43, 44, 45, 46]
+  calibrations: [none, platt, isotonic, temperature]
+  # Accuracy above this is treated as a probable leakage bug: the run stops.
+  leakage_accuracy_alarm: 0.75
+  start_year_experiment: [2001, 2005]
+  profile_features: [diff_height_in, diff_reach_in, diff_age_years]
+  reports_dir: reports/phase3
