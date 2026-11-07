@@ -1,0 +1,18 @@
+# Secrets
+.env
+
+# Environments
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Data: raw downloads and the database are rebuilt locally.
+# Snapshot manifests (data/manifests/) ARE committed: each pins the exact
+# upstream commit SHA, so any historical snapshot can be re-downloaded.
+data/raw/
+data/*.duckdb
+data/*.duckdb.wal
+
+.DS_Store

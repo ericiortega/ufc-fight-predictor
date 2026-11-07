@@ -1,0 +1,40 @@
+{
+  "upstream_repo": "Greco1899/scrape_ufc_stats",
+  "upstream_sha": "3d4886d222e72be2c5336b49b98b721f5103d949",
+  "upstream_committed_at": "2026-11-01T18:02:14Z",
+  "upstream_message": "2026-11-01 data refresh",
+  "retrieved_at": "2026-11-07T17:56:54+00:00",
+  "files": {
+    "ufc_event_details.csv": {
+      "sha256": "34b43588d55c757a75262a2a04b6578d522a47ad0f98a89a313b4b13fb283f26",
+      "bytes": 103042,
+      "lines": 796
+    },
+    "ufc_fight_details.csv": {
+      "sha256": "b3abd2d38a0c4ec163e1fb7d35c2104ee4bd259b489ccee8b68b1984bc156766",
+      "bytes": 1048218,
+      "lines": 9002
+    },
+    "ufc_fight_results.csv": {
+      "sha256": "c1c3ee8004a205ef3bb71bbe74e60d589569df136235a01ac803b156f75af9ff",
+      "bytes": 2113619,
+      "lines": 9002
+    },
+    "ufc_fight_stats.csv": {
+      "sha256": "873527e4231fc9c7198e6332703d40c170678d75fecc99db47f0d8e2bb11d87f",
+      "bytes": 7694855,
+      "lines": 42289
+    },
+    "ufc_fighter_details.csv": {
+      "sha256": "a1f6e4326217fab9734ac42f1958cd07b0b2b98f3caa5da08497ec7648eb6f70",
+      "bytes": 340441,
+      "lines": 4629
+    },
+    "ufc_fighter_tott.csv": {
+      "sha256": "3296e67941f984cd5484488226e5a5d94de3249c63fe289fbc66d98546311ea1",
+      "bytes": 508399,
+      "lines": 4630
+    }
+  },
+  "source_credit": "Data from Greco1899/scrape_ufc_stats (GPL-3.0), originally scraped from ufcstats.com."
+}

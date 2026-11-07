@@ -1,0 +1,44 @@
+project:
+  name: ufc-fight-predictor
+  version: "0.1.0"
+  repo_url: https://github.com/ericiortega/ufc-fight-predictor
+  seed: 42
+
+paths:
+  raw_dir: data/raw
+  manifests_dir: data/manifests
+  db_path: data/ufc.duckdb
+  aliases: config/name_aliases.yaml
+
+http:
+  min_delay_s: 1.5
+  max_delay_s: 3.0
+  timeout_s: 30
+  max_retries: 3
+
+greco:
+  repo: Greco1899/scrape_ufc_stats
+  branch: main
+  files:
+    - ufc_event_details.csv
+    - ufc_fight_details.csv
+    - ufc_fight_results.csv
+    - ufc_fight_stats.csv
+    - ufc_fighter_details.csv
+    - ufc_fighter_tott.csv
+
+wikipedia:
+  api_url: https://en.wikipedia.org/w/api.php
+  events_list_page: List_of_UFC_events
+  upcoming_events_to_fetch: 3
+
+staleness:
+  # Days after the last completed UFC event before a missing upstream
+  # refresh becomes a hard failure (upstream usually refreshes within ~2 days).
+  grace_days: 4
+
+names:
+  suggestion_min_similarity: 0.82
+  weight_margin_lbs: 15
+  min_age_years: 18
+  max_age_years: 60  # Ron van Clief fought at UFC 4 aged 51

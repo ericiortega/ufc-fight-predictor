@@ -1,0 +1,41 @@
+# Curated, human-reviewed name aliases.
+#
+# The resolver never accepts a fuzzy match on its own. When a source spells a
+# fighter differently from their ufcstats profile, add an entry here after
+# checking it (e.g. same weight class, same era, same opponents).
+#
+#   name:         the name exactly as the source shows it (matched after normalization)
+#   fighter_id:   the ufcstats fighter-details ID, or `new` for a confirmed distinct
+#                 fighter with no profile (silences a misleading suggestion)
+#   weight_class: optional scope, for names shared by two different fighters
+#   note:         how it was verified
+aliases:
+  # --- ufcstats fight rows vs. profile names
+  - name: Nick Galanti
+    fighter_id: 8988705468d04ef7
+    note: Profile "Nicholas Galanti", 185 lbs; fight is a 2026 middleweight bout.
+  - name: Rafael Cerquiera
+    fighter_id: 09a4447655fd4b7b
+    note: Misspelling of profile "Rafael Cerqueira", 205 lbs; all 3 fights light heavyweight 2024-25.
+  - name: Mike Davis
+    weight_class: Lightweight
+    fighter_id: fb3e61720be4690c
+    note: >-
+      Two "Mike Davis" profiles; c8661e204c66f325 is empty (no height/weight/DOB).
+      fb3e61720be4690c is 155 lbs, born 1992; all 8 fights are lightweight, 2019-2026.
+
+  # --- Wikipedia upcoming cards vs. profile names
+  - name: Nina Nikolija Milošević
+    fighter_id: eabece0edc2d62ca
+    note: Profile "Nina Milosevic" (135 lbs, UFC fight vs. Hailey Cowan); Wikipedia uses full name.
+  - name: José Mauro Delano
+    fighter_id: d7c4956d61ae76a9
+    note: Profile "Jose Delano" (145 lbs, born 1996); Wikipedia uses full name.
+  - name: Beatriz Mesquita
+    fighter_id: eff9074bc066f0f2
+    note: Profile "Bia Mesquita" (Bia = Beatriz), 135 lbs; booked at women's bantamweight.
+  - name: Ko Seok-hyeon
+    fighter_id: 4a07b1988477502c
+    note: >-
+      Korean name order; profile "Seokhyeon Ko" (170 lbs, 3 UFC fights). Booked at welterweight.
+      Without this alias a broad near-match check is what stopped him being treated as a debut.
